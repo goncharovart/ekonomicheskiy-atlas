@@ -55,7 +55,7 @@ python -m venv .venv
 .venv/Scripts/python.exe -X utf8 scripts/run_all.py
 ```
 
-Шаги по порядку: `download_data → build_panel → fetch_external → run_baseline → run_jury → run_compare → run_interpret → run_dynamics → prepare_geo → build_site`. После каждого шага проверяется, что он записал свои файлы; если нет, конвейер останавливается. Флаги:
+Шаги по порядку: `download_data → build_panel → fetch_external → run_baseline → run_jury → run_compare → run_interpret → run_dynamics → check_mobility → prepare_geo → build_site`. После каждого шага проверяется, что он записал свои файлы; если нет, конвейер останавливается. Флаги:
 
 - `--skip-download` — данные уже в `data/raw`;
 - `--quick` — проверка, что всё запускается: тяжёлые шаги идут в укороченном режиме и пишут в `outputs/quick/`, полные результаты не трогают;
@@ -76,6 +76,7 @@ python -m venv .venv
 | `run_jury` | 395–870 с |
 | `run_compare` с кэшем меток KEFRiN и CANUS / без кэша (`--fresh`) | 114 с / 1 195 с |
 | `run_interpret` | 2–3 с |
+| `check_mobility` (внешняя проверка типов индексом мобильности СберИндекса, 274 МО СЗФО) | 1–2 с |
 | `run_dynamics` с кэшем бутстрэпа / без кэша (`--fresh`, 100 подвыборок × KEFRiN) | 4–5 с / 555 с |
 | `prepare_geo` + `build_site` | 3–4 с |
 | **весь конвейер `run_all.py --skip-download`**, кэши на месте | **1 164 с (19 мин)** |

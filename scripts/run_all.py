@@ -3,7 +3,7 @@
     .venv/Scripts/python.exe -X utf8 scripts/run_all.py [--skip-download] [--quick] [--fresh]
 
 download_data → build_panel → fetch_external → run_baseline → run_jury → run_compare →
-run_interpret → run_dynamics (если скрипт есть) → prepare_geo → build_site.
+run_interpret → run_dynamics (если скрипт есть) → check_mobility → prepare_geo → build_site.
 
 После каждого шага проверяется, что он записал свои файлы: они есть и обновлены за время шага
 (у download_data и fetch_external — только что есть: уже скачанное они не трогают). Если шаг
@@ -47,6 +47,7 @@ STEPS = [
     ("run_interpret", ["outputs/types.csv", "outputs/interpret/profiles.csv",
                        "outputs/interpret/summary.json"], True),
     ("run_dynamics", ["outputs/dynamics/summary.json", "outputs/dynamics/transitions_quarter.csv"], True),
+    ("check_mobility", ["outputs/interpret/mobility_check.csv"], True),   # внешняя проверка индексом мобильности (СЗФО)
     ("prepare_geo", ["site/data/geo.json"], True),
     ("build_site", ["site/data/atlas.js", "site/data/meta.json"], True),
 ]
