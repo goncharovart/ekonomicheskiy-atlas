@@ -498,7 +498,7 @@
       const best = Object.fromEntries(I.map(ix => [ix.key, (ix.better === "max" ? d3.max : d3.min)(R, r => val(r, ix))]));
       const rows = [...R].sort((a, b) => pl(a) - pl(b) || a.place - b.place);
       $("#m-state").textContent = (monthCb.checked ? "Индексы — медиана по 24 помесячным разбиениям" : "Индексы — по сквозным признакам за два года") + (noAvu ? "; места без AVU." : ".");
-      $("#methods-table").innerHTML = `<caption class="sr">Индексы качества пяти методов при K = 7, оценки 1–3 по каждому индексу и итоговые места</caption>
+      $("#methods-table").innerHTML = `<caption class="sr">Индексы качества восьми методов при K = 7, оценки 1–3 по каждому индексу и итоговые места</caption>
         <thead><tr class="grp"><th></th>${["признаки", "граф"].map(on => `<th colspan="${I.filter(ix => ix.on === on).length}">на ${on === "граф" ? "графе сходства" : "признаках"}</th>`).join("")}<th></th></tr>
         <tr><th>Метод, K = 7</th>${I.map(ix => `<th class="${noAvu && ix.key === "AVU" ? "off" : ""}">${esc(ix.name)}<small>${ix.better === "max" ? "↑ больше — лучше" : "↓ меньше — лучше"}</small></th>`).join("")}<th style="text-align:center">Место</th></tr></thead>
         <tbody>${rows.map(r => `<tr class="${pl(r) === 1 ? "win" : ""} ${r.final ? "fin" : ""}"><td><span class="nm">${esc(r.name)}</span>${r.final ? '<span class="tag">итог</span>' : ""}<span class="fam">${esc(r.family)}</span></td>
