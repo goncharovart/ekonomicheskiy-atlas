@@ -4,50 +4,80 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Экономический атлас муниципалитетов</title>
-<meta name="description" content="Типы местных экономик 2 016 муниципалитетов России по безналичным тратам жителей (СберИндекс) и их изменение по месяцам 2023–2024 годов.">
+<meta name="description" content="Семь типов местной экономики 2 016 муниципалитетов России по безналичным тратам жителей (СберИндекс) и их переходы по месяцам 2023–2024 годов.">
+<meta name="theme-color" content="#f6f3ec">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 <header class="top">
   <div class="wrap top-in">
     <a class="brand" href="#top">Экономический атлас <span>муниципалитетов</span></a>
-    <nav>
-      <a href="#map">Карта</a><a href="#flows">Переходы</a><a href="#types">Типы</a><a href="#methods">Методы</a><a href="#method">Как считали</a>
+    <nav aria-label="Разделы">
+      <a href="#map"><i>01</i>Карта</a><a href="#flows"><i>02</i>Переходы</a><a href="#types"><i>03</i>Типы</a><a href="#methods"><i>04</i>Методы</a><a href="#method"><i>05</i>Как считали</a>
     </nav>
   </div>
 </header>
 
 <main id="top">
-  <section class="hero wrap">
-    <p class="kicker">Конкурс СберИндекса · трек «Кластеризация»</p>
-    <h1>Типы местных экономик России: <span class="nowrap" id="h-n">2 016</span> муниципалитетов, 24&nbsp;месяца</h1>
-    <p class="lede">Мы разложили муниципалитеты на типы по структуре безналичных трат жителей: продукты, маркетплейсы, кафе и рестораны, здоровье, транспорт. Затем проследили, как каждый муниципалитет переходит между типами месяц за месяцем с января 2023 по декабрь 2024 года.</p>
-    <p class="headline"><span class="hl-label">Главный вывод</span><span id="headline"></span></p>
-    <dl class="facts" id="facts"></dl>
+  <section class="hero">
+    <div class="wrap hero-in">
+      <div class="hero-text">
+        <p class="kicker">СберИндекс · трек «Кластеризация» · 2023–2024</p>
+        <h1>Города уходят в&nbsp;отрыв</h1>
+        <p class="deck" id="deck"></p>
+        <dl class="keynums" id="keynums"></dl>
+        <p class="headline sr" id="headline"></p>
+      </div>
+      <figure class="hero-viz" id="hero">
+        <div class="hv-top">
+          <div class="hv-month"><output id="hv-month"></output><div class="hv-ticks" id="hv-ticks" aria-hidden="true"></div></div>
+          <div class="hv-ctl">
+            <div class="seg" role="group" aria-label="Расклад точек">
+              <button type="button" data-hv="types" class="on">По типам</button><button type="button" data-hv="map">На карте</button>
+            </div>
+            <button type="button" class="btn icon" id="hv-play" aria-label="Пауза">❚❚</button>
+          </div>
+        </div>
+        <div class="hv-stage">
+          <canvas id="hv-canvas" role="img" aria-label="Две тысячи муниципалитетов точками: группа — тип местной экономики в месяце, цвет — основной тип за два года"></canvas>
+          <div class="hv-labels" id="hv-labels"></div>
+        </div>
+        <figcaption class="hv-cap" id="hv-cap"></figcaption>
+      </figure>
+    </div>
   </section>
 
   <section class="block" id="map">
     <div class="wrap">
-      <header class="sec-head"><span class="num">01</span><div><h2>Карта типов по месяцам</h2>
-        <p class="sub">Цвет — тип местной экономики муниципалитета в выбранном месяце. Слой «Устойчивость» показывает, какую долю из 24 месяцев МО провёл в своём основном типе.</p></div></header>
+      <header class="sec-head">
+        <div><span class="num">01 · Карта</span><h2>Где какой тип</h2>
+          <p class="sub" id="map-lede"></p></div>
+        <aside class="howto"><b>Как читать</b>
+          <p>Цвет — тип местной экономики в выбранном месяце. «Устойчивость» — сколько из 24 месяцев МО провело в своём основном типе. Нажмите на МО, чтобы закрепить его карточку.</p></aside>
+      </header>
       <div class="controls">
-        <button id="play" class="btn" type="button" aria-label="Проиграть по месяцам">▶</button>
-        <label class="slider"><span class="sr">Месяц</span><input id="month" type="range" min="0" max="23" value="0" step="1"></label>
-        <output id="month-label" class="month-label"></output>
+        <div class="seg seg-geo" role="group" aria-label="Форма карты">
+          <button type="button" class="on" data-geo="area">Территория</button><button type="button" data-geo="eq">Равные клетки</button><button type="button" data-geo="pop">По населению</button>
+        </div>
         <div class="seg" role="group" aria-label="Слой карты">
           <button type="button" class="on" data-layer="type">Тип</button><button type="button" data-layer="stab">Устойчивость</button>
         </div>
         <label class="search"><span class="sr">Найти муниципалитет</span>
           <input id="search" list="mo-list" placeholder="Найти муниципалитет…" autocomplete="off"><datalist id="mo-list"></datalist></label>
       </div>
+      <div class="timeline">
+        <button id="play" class="btn icon" type="button" aria-label="Проиграть по месяцам">▶</button>
+        <label class="slider"><span class="sr">Месяц</span><input id="month" type="range" min="0" max="23" value="0" step="1"></label>
+        <output id="month-label" class="month-label"></output>
+      </div>
       <div class="map-grid">
         <div class="map-box">
           <svg id="map-svg" role="img" aria-label="Карта муниципалитетов России, окрашенных по типу экономики"></svg>
           <div class="zoom"><button type="button" data-z="in" aria-label="Приблизить">+</button><button type="button" data-z="out" aria-label="Отдалить">−</button><button type="button" data-z="reset" aria-label="Вся страна">⤢</button></div>
-          <p class="hint">Колесо с Ctrl или два пальца — масштаб. Нажмите на МО, чтобы закрепить карточку.</p>
+          <p class="hint" id="map-hint">Колесо с Ctrl или два пальца — масштаб</p>
         </div>
         <aside class="side">
           <div id="legend" class="legend"></div>
@@ -59,8 +89,13 @@
 
   <section class="block alt" id="flows">
     <div class="wrap">
-      <header class="sec-head"><span class="num">02</span><div><h2>Переходы между типами по кварталам</h2>
-        <p class="sub">Столбик — число МО каждого типа в квартале (тип квартала — самый частый из трёх месяцев). Лента — МО, которые перешли из типа в тип между соседними кварталами.</p></div></header>
+      <header class="sec-head">
+        <div><span class="num">02 · Переходы</span><h2>Муниципалитеты меняют тип на соседний</h2>
+          <p class="sub" id="flow-lede"></p></div>
+        <aside class="howto"><b>Как читать</b>
+          <p><span class="glyph bar"></span>Столбик — число МО типа в квартале (тип квартала — самый частый из трёх месяцев).</p>
+          <p><span class="glyph flow"></span>Цветная лента — МО, сменившие тип; бледная — оставшиеся. Наведите на тип или ленту.</p></aside>
+      </header>
       <div class="controls">
         <label class="check"><input type="checkbox" id="only-moves"> только смены типа</label>
         <span class="muted" id="flow-stat"></span>
@@ -72,16 +107,24 @@
 
   <section class="block" id="types">
     <div class="wrap">
-      <header class="sec-head"><span class="num">03</span><div><h2>Профили типов</h2>
-        <p class="sub">Доля каждой категории в тратах типа и её отношение к среднему по всем МО (×1 — как в среднем). Темп — медиана роста трат 2024 к 2023. Показатели Росстата — медианы по МО типа.</p></div></header>
+      <header class="sec-head">
+        <div><span class="num">03 · Типы</span><h2>Семь портретов</h2>
+          <p class="sub">Одинаковые оси у всех семи: сравнивайте панели между собой. Темп — медиана роста трат 2024 к 2023; зарплата и население — Росстат, медианы по МО типа.</p></div>
+      </header>
       <div id="profiles" class="profiles"></div>
     </div>
   </section>
 
   <section class="block alt" id="methods">
     <div class="wrap">
-      <header class="sec-head"><span class="num">04</span><div><h2>Сравнение методов по шести индексам качества</h2>
-        <p class="sub">Пять методов при одном K&nbsp;=&nbsp;7 на общих признаках и общем графе. По каждому индексу метод получает оценку 1, 2 или 3 (треть мест); место — пороговое агрегирование Алескерова: выше тот, у кого меньше троек, затем меньше двоек. Место по Борда — в подсказке у места. Лучшее значение в столбце выделено.</p></div></header>
+      <header class="sec-head">
+        <div><span class="num">04 · Методы</span><h2>Пять методов, шесть индексов качества</h2>
+          <p class="sub">Пять методов при одном K&nbsp;=&nbsp;7 на общих признаках и общем графе. По каждому индексу метод получает оценку 1, 2 или 3 (треть мест); место — пороговое агрегирование Алескерова: выше тот, у кого меньше троек, затем меньше двоек. Место по Борда — в подсказке у места.</p></div>
+        <aside class="howto"><b>Как читать</b>
+          <p>Цвет клетки — оценка метода по индексу:</p>
+          <p class="grades"><span class="g1">1</span> верхняя треть <span class="g2">2</span> <span class="g3">3</span> нижняя</p>
+          <p><span class="glyph best"></span>лучшее значение в столбце</p></aside>
+      </header>
       <div class="controls">
         <label class="check"><input type="checkbox" id="m-month"> медиана по 24 месяцам</label>
         <label class="check"><input type="checkbox" id="m-noavu"> без AVU</label>
@@ -89,15 +132,19 @@
       </div>
       <p class="swipe muted">Таблица шире экрана — листайте вбок, место в последнем столбце.</p>
       <div class="scroll-x"><table id="methods-table" class="mtable"></table></div>
-      <p class="note">SW, CH и S_Dbw считаются на признаках, AVI, AVU и модулярность Q — на графе сходства. AVI и AVU входят в рейтинг через z (отклонение от случайных разбиений): их сырые значения зависят от K. CH подыгрывает k-means, поэтому сравнивать стоит по всем шести индексам сразу.</p>
-      <p class="note">AVU видит только форму разреза, а не долю связей внутри типов, поэтому у хороших разбиений он на уровне случайного (z&nbsp;&gt;&nbsp;0); без AVU лидер не меняется — <span id="avu-link"></span>.</p>
+      <div class="notes">
+        <p class="note">SW, CH и S_Dbw считаются на признаках, AVI, AVU и модулярность Q — на графе сходства. AVI и AVU входят в рейтинг через z (отклонение от случайных разбиений): их сырые значения зависят от K. CH подыгрывает k-means, поэтому сравнивать стоит по всем шести индексам сразу.</p>
+        <p class="note">AVU видит только форму разреза, а не долю связей внутри типов, поэтому у хороших разбиений он на уровне случайного (z&nbsp;&gt;&nbsp;0); без AVU лидер не меняется — <span id="avu-link"></span>.</p>
+      </div>
     </div>
   </section>
 
   <section class="block" id="method">
     <div class="wrap">
-      <header class="sec-head"><span class="num">05</span><div><h2>Как считали</h2>
-        <p class="sub">Пять шагов. Каждый воспроизводится одной командой из репозитория.</p></div></header>
+      <header class="sec-head">
+        <div><span class="num">05 · Как считали</span><h2>Пять шагов от чека до типа</h2>
+          <p class="sub">Каждый шаг воспроизводится одной командой из репозитория.</p></div>
+      </header>
       <ol class="pipeline">
         <li><b>Данные</b><span>Траты по картам СберИндекса: 5 категорий, 2 016 МО с полными 24 месяцами. Признаки — доли трат, уровень трат на жителя, доступность рынков. Росстат в признаки не входит: он для внешней проверки типов.</span></li>
         <li><b>Сеть</b><span>Узлы — МО. Основной граф — k ближайших соседей (k&nbsp;=&nbsp;15) по корреляции помесячных рядов трат на жителя с лагом до 2 месяцев: чьи траты движутся вместе. Один на весь период, без изолятов.</span></li>
@@ -110,8 +157,10 @@
   </section>
 </main>
 
-<footer class="foot wrap">
-  <p>Данные: СберИндекс (данные конкурса, лицензия организатора), Росстат, справочник границ МО СберИндекса. Собрано: <span id="built"></span>.</p>
+<footer class="foot">
+  <div class="wrap">
+    <p>Данные: СберИндекс (данные конкурса, лицензия организатора), Росстат, справочник границ МО СберИндекса. Картограммы: равные клетки — шестиугольная решётка поверх картограммы Дорлинга, «по населению» — кружки площадью по населению 2024 года. Собрано: <span id="built"></span>.</p>
+  </div>
 </footer>
 
 <div id="tip" class="tip" hidden></div>

@@ -6,6 +6,9 @@
   outputs/indices.csv           индексы: method, name, family, variant, period, K, SW … MQ, z_*
   outputs/method_ranking.csv    места: пороговое агрегирование и Борда, с AVU и без
   outputs/types.csv             необязательно: label, name, description
+  outputs/interpret/profiles.csv необязательно: траты на жителя по типам (spend_ratio, spend_rub_geo)
+ATLAS.layout — картограммы для сайта в км проекции geo.json: c (центроиды), eq (равные клетки:
+шестиугольная решётка поверх Дорлинга), pop (кружки Дорлинга площадью по населению 2024), r_eq, r_pop.
 Пока нет types.csv, названия типов — заглушки «Тип A…», в meta.stub стоит «названия типов»,
 и сайт помечает их как черновые. Всё остальное — настоящие расчёты.
 
@@ -18,11 +21,14 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
+import shapely
+from scipy.spatial import cKDTree
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "site/data"
 LABELS = ROOT / "outputs/labels/final.parquet"
 TYPES = ROOT / "outputs/types.csv"
+PROFILES = ROOT / "outputs/interpret/profiles.csv"  # траты на жителя по типам (spend_ratio, spend_rub_geo)
 INDICES = ROOT / "outputs/indices.csv"
 RANKING = ROOT / "outputs/method_ranking.csv"
 FINAL_METHOD = "kefrin"  # outputs/final_choice.md: итоговая типология — KEFRiN, K = 7
@@ -76,6 +82,61 @@ def methods_table():
     return out
 
 
+def dorling(c, r, iters=500, seed=0):
+    """Кружки радиуса r без наложений, каждый как можно ближе к своему центроиду c (картограмма Дорлинга)."""
+    p = c + np.random.default_rng(seed).normal(0, 1e-3, c.shape) * r[:, None]
+    for it in range(iters):
+        pairs = cKDTree(p).query_pairs(2 * r.max(), output_type="ndarray")
+        i, j = pairs[:, 0], pairs[:, 1]
+        d = p[j] - p[i]
+        dist = np.hypot(d[:, 0], d[:, 1]) + 1e-9
+        ov = r[i] + r[j] - dist
+        m = ov > 1e-3 * r.min()
+        if not m.any():
+            break
+        mv = d[m] / dist[m, None] * (ov[m] / 2)[:, None]
+        delta = np.zeros_like(p)
+        np.add.at(delta, i[m], -mv)
+        np.add.at(delta, j[m], mv)
+        p += 0.6 * delta + 0.02 * (1 - it / iters) * (c - p)
+    return p
+
+
+def hexsnap(p, r):
+    """Каждому МО — своя клетка шестиугольной решётки (шаг 2r), ближайшая к его месту на картограмме."""
+    dy = np.sqrt(3) * r
+    cell = lambda row, col: np.array([(col + (row % 2) / 2) * 2 * r, row * dy])
+    taken, out = set(), np.zeros_like(p)
+    for i in np.lexsort((p[:, 0], -p[:, 1])):
+        row0 = int(round(p[i, 1] / dy)); col0 = int(round(p[i, 0] / (2 * r) - (row0 % 2) / 2))
+        for k in range(1, 60):
+            cand = [(np.hypot(*(cell(a, b) - p[i])), a, b) for a in range(row0 - k, row0 + k + 1)
+                    for b in range(col0 - k, col0 + k + 1) if (a, b) not in taken]
+            if cand:
+                _, a, b = min(cand)
+                taken.add((a, b)); out[i] = cell(a, b)
+                break
+    return out
+
+
+def layouts(ids, pop):
+    """Центроиды МО и две картограммы в км той же проекции, что geo.json: равные клетки и кружки по населению."""
+    geo = json.loads((OUT / "geo.json").read_text(encoding="utf-8"))
+    cen = {f["id"]: shapely.geometry.shape(f["geometry"]).centroid for f in geo["features"]}
+    c = np.array([[cen[t].x, cen[t].y] for t in ids])
+    area = sum(shapely.geometry.shape(f["geometry"]).area for f in geo["features"])
+    r_eq = np.sqrt(0.6 * area / len(ids) / np.pi)  # клетки вместе — 60 % площади страны: запад раздвигается, восток не пустеет
+    eq = hexsnap(dorling(c, np.full(len(ids), r_eq)), r_eq)
+    pp = np.nan_to_num(pop, nan=np.nanmedian(pop))
+    r_pop = np.sqrt(pp / pp.sum() * 0.45 * area / np.pi)  # площадь кружка ∝ населению, всего 45 % площади
+    r_pop = np.maximum(r_pop, 0.25 * r_eq)
+    dp = dorling(c, r_pop)
+    rd = lambda a: np.rint(a).astype(int).tolist()
+    return {"r_eq": round(float(r_eq), 2), "c": [rd(c[:, 0]), rd(c[:, 1])], "eq": [rd(eq[:, 0]), rd(eq[:, 1])],
+            "pop": [rd(dp[:, 0]), rd(dp[:, 1])], "r_pop": np.round(r_pop, 1).tolist(),
+            "population": [None if np.isnan(x) else int(x) for x in pop]}
+
+
 def main():
     mo, attrs, panel = load()
     stub = []
@@ -119,6 +180,7 @@ def main():
     ru = X.mean(0)
     at = attrs.reindex(ids)
     pop = at["population_2024"].fillna(at["population_2023"])
+    prof = pd.read_csv(PROFILES).set_index("type") if PROFILES.exists() else pd.DataFrame()
     types = []
     for k in range(K):
         sel = labf == k
@@ -140,8 +202,11 @@ def main():
             "growth": [_r(g[c].median()) for c in CATS],
             "wage_2023": _r(at.loc[inmod, "wage_2023"].median(), 0),
             "population_2024": _r(pop[inmod].median(), 0),
-            "market_access_2024": _r(at.loc[inmod, "market_access_2024"].median(), 3),
+            # из профилей, как в описании типа: иначе на одной карточке две разные медианы
+            "market_access_2024": _r(prof.at[str(k), "market_access_median"], 3) if str(k) in prof.index else None,
             "stability": _r(stability[inmod].mean(), 3),
+            "spend_ratio": _r(prof.at[str(k), "spend_ratio"], 3) if str(k) in prof.index else None,
+            "spend_rub": _r(prof.at[str(k), "spend_rub_geo"], 0) if str(k) in prof.index else None,
             "examples": [{"id": int(r.id), "n": mo.at[r.id, "name"], "r": mo.at[r.id, "region_name"]} for r in ex.itertuples()],
         })
 
@@ -154,13 +219,15 @@ def main():
         links += [{"q": q, "s": int(s), "t": int(t), "n": int(n)} for (s, t), n in pairs.items() if s >= 0 and t >= 0]
     nodes = [[int((ql[:, q] == k).sum()) for k in range(K)] for q in range(len(quarters))]
 
-    first, last = np.array(nodes[0]), np.array(nodes[-1])
-    grow_k = int((last - first).argmax())
-    # Помесячная перекластеризация шумит (все 24 месяца в одном типе — лишь доля МО), поэтому в
-    # заголовке — доля месяцев в основном типе и рост по кварталам, как советует final_choice.md §6.
-    headline = (f"Муниципалитет проводит в своём основном типе местной экономики в среднем "
-                f"{stability.mean():.0%} месяцев; сильнее всего за два года вырос тип «{types[grow_k]['name'].split(':')[0].strip()}»: "
-                f"{first[grow_k]} → {last[grow_k]} МО.").replace("%", " %")
+    # В заголовке — разрыв темпов роста трат между типами и устойчивость. Число МО по типам между
+    # кварталами не годится: у соседних типов (города 3 и 5) оно скачет туда-обратно на ~110 МО за месяц.
+    gt = [t["growth_total"] or 0 for t in types]
+    hi, lo = int(np.argmax(gt)), int(np.argmin(gt))
+    nm = lambda k: types[k]["name"].split(":")[0].strip()
+    pc = lambda x, f=".1%": format(x, f).replace(".", ",").replace("%", " %")
+    headline = (f"Траты по картам быстрее всего растут в типе «{nm(hi)}» (+{pc(gt[hi])} за 2024 год к 2023-му), "
+                f"медленнее всего — в типе «{nm(lo)}» (+{pc(gt[lo])}). Муниципалитет проводит в своём основном "
+                f"типе в среднем {pc(stability.mean(), '.0%')} месяцев.")
 
     meta = {
         "stub": stub, "built": datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -175,6 +242,7 @@ def main():
                    "switches": switches.tolist()},
         "shares": {"ids": ids, "scale": 1000, "values": np.rint(shares * 1000).astype(int).tolist()},
         "transitions": {"quarters": quarters, "nodes": nodes, "links": links},
+        "layout": layouts(ids, pop.to_numpy(dtype=float)),
         "methods": {"indices": [{"key": k, "name": n, "better": b, "on": o, "by": by} for k, n, b, o, by in INDEX_META],
                     "periods": methods_table()},
     }
