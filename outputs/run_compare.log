@@ -1,8 +1,8 @@
 входы: 2 с; граф lagcorr_knn: {'edges': 25496, 'mean_degree': 25.293650793650794, 'isolates': 0, 'components': 1}
 темп соседних месяцев, Спирмен: -0.246
-метки: 7 с
-лучшее K (Борда на сквозных): {'canus': 9, 'kefrin': 10, 'kmeans': 8, 'leiden': 4, 'patterns': 4} | без AVU: {'canus': 9, 'kefrin': 10, 'kmeans': 5, 'leiden': 7, 'patterns': 4}
-индексы: 79 с
+метки: 15 с
+лучшее K (Борда на сквозных): {'canus': 9, 'gmm': 4, 'kefrin': 10, 'kmeans': 8, 'leiden': 4, 'patterns': 4, 'spectral': 4, 'ward': 7} | без AVU: {'canus': 9, 'gmm': 4, 'kefrin': 10, 'kmeans': 5, 'leiden': 7, 'patterns': 4, 'spectral': 4, 'ward': 7}
+индексы: 202 с
 
 == indices.csv ==
    method variant       period  K    SW      CH  S_Dbw   AVI   AVU     Q   z_AVI   z_AVU     z_Q
@@ -10,6 +10,12 @@
   kmeans  common month_median  7 0.195 647.831  0.446 0.490 0.509 0.358 154.559 -10.603 170.016
   leiden  common          all  7 0.037 201.957  0.601 0.842 0.539 0.676 289.373  14.240 268.502
   leiden  common month_median  7 0.032 280.569  0.696 0.842 0.539 0.676 259.547  12.703 238.567
+    ward  common          all  7 0.103 285.754  0.595 0.535 0.498 0.428 185.363   2.137 192.614
+    ward  common month_median  7 0.145 546.784  0.533 0.475 0.505 0.346 158.002  -1.545 165.303
+     gmm  common          all  7 0.069 259.566  0.660 0.517 0.545 0.384 173.790   8.707 175.290
+     gmm  common month_median  7 0.147 540.408  0.625 0.500 0.523 0.340 169.618   1.680 166.660
+spectral  common          all  7 0.045 207.309  0.633 0.840 0.509 0.662 291.929  10.617 259.457
+spectral  common month_median  7 0.043 301.374  0.641 0.840 0.509 0.662 292.852  10.182 236.638
   kefrin  common          all  7 0.105 301.460  0.568 0.637 0.567 0.505 222.038  22.962 228.767
   kefrin  common month_median  7 0.150 531.335  0.518 0.545 0.549 0.442 194.407  11.129 209.455
    canus  common          all  7 0.117 286.744  0.626 0.547 0.568 0.447 186.395  22.549 200.943
@@ -20,6 +26,12 @@ patterns  common month_median  7 0.088 355.903  0.745 0.358 0.458 0.293  97.814 
   kmeans    best month_median  8 0.193 606.477  0.415 0.443 0.502 0.349 158.408 -10.582 180.802
   leiden    best          all  4 0.103 308.720  0.504 0.941 0.551 0.586 237.103  11.769 196.962
   leiden    best month_median  4 0.112 395.874  0.617 0.941 0.551 0.586 206.710   9.294 183.781
+    ward    best          all  7 0.103 285.754  0.595 0.535 0.498 0.428 185.363   2.137 192.614
+    ward    best month_median  7 0.145 546.784  0.533 0.475 0.505 0.346 158.002  -1.545 165.303
+     gmm    best          all  4 0.116 423.109  0.649 0.642 0.612 0.382 136.445  18.924 132.391
+     gmm    best month_median  4 0.242 785.166  0.860 0.685 0.557 0.410 149.319  -2.845 155.337
+spectral    best          all  4 0.105 313.218  0.500 0.937 0.541 0.584 229.590   6.323 198.472
+spectral    best month_median  4 0.112 399.189  0.600 0.937 0.541 0.584 209.712   4.901 185.166
   kefrin    best          all 10 0.095 233.668  0.518 0.615 0.512 0.521 276.855   5.380 275.678
   kefrin    best month_median 10 0.130 427.450  0.388 0.524 0.510 0.460 249.379   5.289 237.100
    canus    best          all  9 0.091 249.874  0.555 0.557 0.551 0.486 248.487  17.644 259.754
@@ -29,26 +41,38 @@ patterns    best month_median  4 0.170 551.025  1.407 0.564 0.598 0.338 128.461 
 
 == рейтинг ==
  variant       period   method  K  grade_SW  grade_CH  grade_S_Dbw  grade_z_AVI  grade_z_AVU  grade_Q  n_grade1  n_grade2  n_grade3  threshold_place  threshold_place_without_AVU  borda_points  borda_place  borda_place_without_AVU  threshold_place_leader_same_without_AVU  borda_place_leader_same_without_AVU  best_K  best_K_without_AVU
- common          all   kefrin  7         2         2            1            2            3        2         1         4         1                1                            1          15.0            2                        1                                     True                                False      10                  10
- common          all   kmeans  7         1         1            2            3            1        3         3         1         2                2                            3          17.0            1                        2                                     True                                False       8                   5
- common          all   leiden  7         3         3            2            1            2        1         2         2         2                3                            3          13.0            3                        3                                     True                                False       4                   7
- common          all    canus  7         2         2            3            2            3        2         0         4         2                4                            2          11.0            4                        4                                     True                                False       9                   9
- common          all patterns  7         3         3            3            3            2        3         0         1         5                5                            5           4.0            5                        5                                     True                                False       4                   4
- common month_median   kefrin  7         2         2            2            2            2        2         0         6         0                1                            1          16.0            2                        1                                    False                                False      10                  10
- common month_median    canus  7         2         2            2            2            3        2         0         5         1                2                            1          11.0            3                        3                                    False                                False       9                   9
- common month_median   kmeans  7         1         1            1            3            1        3         4         0         2                3                            3          18.0            1                        1                                    False                                False       8                   5
- common month_median   leiden  7         3         3            3            1            3        1         2         0         4                4                            4          10.0            4                        4                                    False                                False       4                   7
- common month_median patterns  7         3         3            3            3            2        3         0         1         5                5                            5           5.0            5                        5                                    False                                False       4                   4
-   best          all   leiden  4         2         2            1            2            2        1         2         4         0                1                            1          16.0            1                        1                                     True                                 True       4                   7
-   best          all   kefrin 10         3         3            2            1            1        2         2         2         2                2                            2          15.0            2                        2                                     True                                 True      10                  10
-   best          all   kmeans  8         1         2            2            3            2        3         1         3         2                3                            2          14.0            3                        2                                     True                                 True       8                   5
-   best          all patterns  4         2         1            3            3            3        3         1         1         4                4                            4           7.0            5                        4                                     True                                 True       4                   4
-   best          all    canus  9         3         3            3            2            3        2         0         2         4                5                            5           8.0            4                        4                                     True                                 True       9                   9
-   best month_median   kefrin 10         2         3            1            1            2        2         2         3         1                1                            1          17.0            1                        1                                     True                                False      10                  10
-   best month_median   kmeans  8         1         1            2            3            1        3         3         1         2                2                            3          17.0            1                        2                                     True                                False       8                   5
-   best month_median    canus  9         3         2            2            2            3        2         0         4         2                3                            2          10.0            3                        3                                     True                                False       9                   9
-   best month_median   leiden  4         3         3            3            2            2        1         1         2         3                4                            4          10.0            3                        4                                     True                                False       4                   7
-   best month_median patterns  4         2         2            3            3            3        3         0         2         4                5                            5           6.0            5                        5                                     True                                False       4                   4
+ common          all     ward  7         2         2            2            2            1        2         1         5         0                1                            3          26.0            3                        4                                    False                                False       7                   7
+ common          all   kefrin  7         2         1            1            2            3        2         2         3         1                2                            1          28.0            2                        1                                    False                                False      10                  10
+ common          all    canus  7         1         2            2            2            3        2         1         4         1                3                            2          23.0            4                        3                                    False                                False       9                   9
+ common          all   kmeans  7         1         1            1            3            2        3         3         1         2                4                            4          29.0            1                        2                                    False                                False       8                   5
+ common          all spectral  7         3         3            3            1            2        1         2         1         3                5                            6          22.0            5                        5                                    False                                False       4                   4
+ common          all   leiden  7         3         3            2            1            3        1         2         1         3                5                            5          20.0            6                        5                                    False                                False       4                   7
+ common          all      gmm  7         2         2            3            3            1        3         1         2         3                7                            7          15.0            7                        7                                    False                                False       4                   4
+ common          all patterns  7         3         3            3            3            2        3         0         1         5                8                            8           5.0            8                        8                                    False                                False       4                   4
+ common month_median   kmeans  7         1         1            1            3            1        2         4         1         1                1                            3          32.0            1                        1                                    False                                False       8                   5
+ common month_median   kefrin  7         2         2            1            2            3        2         1         4         1                2                            1          27.0            2                        1                                    False                                False      10                  10
+ common month_median    canus  7         1         2            2            2            3        2         1         4         1                2                            1          21.0            5                        3                                    False                                False       9                   9
+ common month_median      gmm  7         2         2            2            2            2        3         0         5         1                4                            4          22.0            4                        4                                    False                                False       4                   4
+ common month_median     ward  7         2         1            2            3            1        3         2         2         2                5                            5          23.0            3                        4                                    False                                False       7                   7
+ common month_median spectral  7         3         3            3            1            2        1         2         1         3                6                            6          21.0            5                        4                                    False                                False       4                   4
+ common month_median   leiden  7         3         3            3            1            3        1         2         0         4                7                            6          15.0            7                        7                                    False                                False       4                   7
+ common month_median patterns  7         3         3            3            3            2        3         0         1         5                8                            8           7.0            8                        8                                    False                                False       4                   4
+   best          all spectral  4         2         2            1            2            2        1         2         4         0                1                            1          31.0            1                        1                                     True                                 True       4                   4
+   best          all   leiden  4         3         2            1            2            2        1         2         3         1                2                            2          26.0            2                        2                                     True                                 True       4                   7
+   best          all   kmeans  8         1         2            2            2            2        3         1         4         1                3                            3          24.0            3                        3                                     True                                 True       8                   5
+   best          all   kefrin 10         3         3            2            1            1        2         2         2         2                4                            4          24.0            3                        4                                     True                                 True      10                  10
+   best          all     ward  7         2         3            3            3            1        2         1         2         3                5                            8          19.0            5                        7                                     True                                 True       7                   7
+   best          all    canus  9         3         3            2            1            3        2         1         2         3                5                            4          16.0            7                        6                                     True                                 True       9                   9
+   best          all      gmm  4         1         1            3            3            3        3         2         0         4                7                            6          17.0            6                        5                                     True                                 True       4                   4
+   best          all patterns  4         2         1            3            3            3        3         1         1         4                8                            7          11.0            8                        8                                     True                                 True       4                   4
+   best month_median   kmeans  8         1         1            1            2            1        3         4         1         1                1                            1          30.0            1                        2                                     True                                False       8                   5
+   best month_median   kefrin 10         2         3            1            1            2        2         2         3         1                2                            2          27.0            2                        1                                     True                                False      10                  10
+   best month_median      gmm  4         1         1            3            3            1        2         3         1         2                3                            4          26.0            3                        3                                     True                                False       4                   4
+   best month_median spectral  4         3         3            2            1            2        1         2         2         2                4                            4          20.0            4                        5                                     True                                False       4                   4
+   best month_median     ward  7         2         2            2            3            2        3         0         4         2                5                            6          20.0            4                        6                                     True                                False       7                   7
+   best month_median    canus  9         3         2            2            2            3        2         0         4         2                5                            3          18.0            6                        4                                     True                                False       9                   9
+   best month_median   leiden  4         3         3            3            2            3        1         1         1         4                7                            7          17.0            7                        6                                     True                                False       4                   7
+   best month_median patterns  4         2         2            3            3            3        3         0         2         4                8                            8          10.0            8                        8                                     True                                False       4                   4
 
 == устойчивость ==
    method  K  stay_share  median_switches  modal_share  ari_next_month  ari_month_vs_all  min_types_in_month
@@ -57,6 +81,14 @@ patterns    best month_median  4 0.170 551.025  1.407 0.564 0.598 0.338 128.461 
   leiden  4       1.000              0.0        1.000           1.000             1.000                   4
   leiden  7       1.000              0.0        1.000           1.000             1.000                   7
   leiden  8       1.000              0.0        1.000           1.000             1.000                   8
+    ward  7       0.058             13.0        0.593           0.349             0.259                   7
+    ward  8       0.042             13.0        0.574           0.362             0.240                   8
+     gmm  4       0.273              4.0        0.824           0.726             0.484                   4
+     gmm  7       0.078             10.0        0.721           0.504             0.424                   7
+     gmm  8       0.059              9.0        0.696           0.544             0.447                   8
+spectral  4       1.000              0.0        1.000           1.000             1.000                   4
+spectral  7       1.000              0.0        1.000           1.000             1.000                   7
+spectral  8       1.000              0.0        1.000           1.000             1.000                   8
   kefrin  7       0.138              7.0        0.771           0.614             0.363                   7
   kefrin  8       0.085              9.0        0.676           0.554             0.354                   8
   kefrin 10       0.066             11.0        0.650           0.537             0.337                  10
@@ -67,4 +99,4 @@ patterns  4       0.090              3.0        0.730           0.658           
 patterns  7       0.054              6.0        0.642           0.550             0.412                   7
 patterns  8       0.047              6.0        0.617           0.533             0.402                   8
 
-итог: kefrin, K=7, размеры типов [8696, 8672, 7647, 6469, 6241, 5878, 4781]; готово за 81 с
+итог: kefrin, K=7, размеры типов [8729, 8690, 8251, 6469, 6241, 5878, 4126]; готово за 208 с

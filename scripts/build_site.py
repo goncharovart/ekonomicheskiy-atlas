@@ -74,7 +74,8 @@ def methods_table():
     for period, g in t.groupby("period"):
         out[period] = [{
             "key": r["method"], "name": r["name"], "family": FAMILY.get(r["family"], r["family"]), "K": int(r["K"]),
-            **{k: _r(r[k]) for k in keys}, "z": {k: _r(r[f"z_{k}"], 1) for k in ("AVI", "AVU", "MQ")},
+            # 6 знаков: при 4 двойное округление расходится с отчётом (0,636524 → 0,6365 → 0,636)
+            **{k: _r(r[k], 6) for k in keys}, "z": {k: _r(r[f"z_{k}"], 1) for k in ("AVI", "AVU", "MQ")},
             "grade": {k: int(r[f"grade_{rk_by}"]) for k, *_, rk_by in INDEX_META},
             "place": int(r["threshold_place"]), "place_noavu": int(r["threshold_place_without_AVU"]),
             "borda": int(r["borda_place"]), "borda_noavu": int(r["borda_place_without_AVU"]),

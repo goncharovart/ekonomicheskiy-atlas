@@ -1,11 +1,12 @@
-"""Сравнение пяти методов на общих признаках и общем графе одной командой:
+"""Сравнение восьми методов на общих признаках и общем графе одной командой:
 
     .venv/Scripts/python.exe -X utf8 scripts/run_compare.py [--config configs/compare.yaml] [--quick] [--fresh]
 
   1. общие входы: признаки src/features.py (сквозные и помесячные), граф src/network.py
      (kNN по корреляции рядов, один на весь период);
   2. метки: k-means — из outputs/labels/kmeans_byK.parquet (те же признаки, run_baseline.py);
-     Leiden — заново на общем графе; KEFRiN и CANUS — заново на общих признаках и графе
+     Ward и GMM — заново на тех же признаках (дёшево, без кэша); Leiden и спектральная — заново
+     на общем графе; KEFRiN и CANUS — заново на общих признаках и графе
      (кэш outputs/labels/jury_common_byK.parquet, --fresh пересчитывает); паттерны — слияние до K;
   3. шесть индексов + z против перестановок: сквозные для K из k_range, помесячно для k_common
      и лучшего K метода (Борда по k_select на сквозных, как в run_baseline.py);
@@ -32,16 +33,19 @@ from src import compare as C  # noqa: E402
 from src import features as F  # noqa: E402
 from src import jury_methods as jm  # noqa: E402
 from src import network as N  # noqa: E402
-from src.baseline import align, borda_best_k, evaluate, leiden_labels  # noqa: E402
+from src.baseline import align, borda_best_k, evaluate, gmm_labels, leiden_labels, spectral_labels, ward_labels  # noqa: E402
 from src.dynamics import consensus_align  # noqa: E402
 from src.icvi import pairwise_dist  # noqa: E402
 
-METHODS = ["kmeans", "leiden", "kefrin", "canus", "patterns"]
-FAMILY = {"kmeans": "baseline", "leiden": "baseline", "kefrin": "jury", "canus": "jury", "patterns": "jury"}
+METHODS = ["kmeans", "leiden", "ward", "gmm", "spectral", "kefrin", "canus", "patterns"]
+FAMILY = {m: "baseline" for m in ("kmeans", "leiden", "ward", "gmm", "spectral")} |          {m: "jury" for m in ("kefrin", "canus", "patterns")}
 NAME = {"kmeans": "k-means по признакам", "leiden": "Leiden по графу",
+        "ward": "Ward (агломеративная) по признакам", "gmm": "GMM (диагональная ковариация) по признакам",
+        "spectral": "Спектральная по графу",
         "kefrin": "KEFRiN (Шалилех, Миркин)", "canus": "CANUS (Шалилех)",
         "patterns": "Паттерны (Алескеров, Мячин), слияние до K"}
-ALIGN = {"kmeans", "kefrin", "canus"}  # номера кластеров по месяцам случайны; у Leiden и паттернов общие
+FEAT = {"ward": ward_labels, "gmm": gmm_labels}  # на тех же признаках, что k-means; каждый запуск < 1 с
+ALIGN = {"kmeans", "ward", "gmm", "kefrin", "canus"}  # номера по месяцам случайны; у графовых и паттернов общие
 IDX = ["SW", "CH", "S_Dbw", "AVI", "AVU", "Q"]
 ZIDX = [f"z_{c}" for c in IDX]
 AVU_NOTE = ("AVU участвует с оговоркой: в формуле лаборатории он зависит только от формы разреза, "
@@ -77,6 +81,11 @@ def ensure_joint(L, need, X, Ad, jcfg, seed, n_jobs):
         L.update(zip(todo, res))
         print(f"KEFRiN/CANUS: {len(todo)} запусков за {time.time() - t:.0f} с", flush=True)
     return L
+
+
+def ensure_feat(L, need, X, seed, n_jobs):
+    todo = sorted(k for k in need if k not in L)
+    L.update(zip(todo, Parallel(n_jobs=n_jobs)(delayed(FEAT[m])(X[p], K, seed) for m, p, K in todo)))
 
 
 def pattern_labels(jcfg, ids, Ks):
@@ -198,6 +207,11 @@ def main():
     for K, (lab, gamma) in zip(Ks_all, ld):
         gammas[K] = gamma
         L.update({("leiden", p, K): lab for p in X})  # граф один на весь период — разбиение тоже
+    sp = Parallel(n_jobs=nj)(delayed(spectral_labels)(A, K, seed) for K in Ks_all)
+    for K, lab in zip(Ks_all, sp):
+        L.update({("spectral", p, K): lab for p in X})
+    ensure_feat(L, {(m, "all", K) for m in FEAT for K in Ks_all} | {(m, p, K) for m in FEAT for p in mkeys for K in k_common},
+                X, seed, nj)
     pl, n_patterns = pattern_labels(jcfg, ids, Ks_all)
     L.update({k: v for k, v in pl.items() if k[1] in X})
     cache = None if args.quick else ROOT / oc["labels_cache"]
@@ -226,6 +240,7 @@ def main():
     if cache:
         long(J, ids).to_parquet(cache, index=False)
     L.update({k: v for k, v in J.items() if k[1] in X})
+    ensure_feat(L, {(m, p, best[m]) for m in FEAT for p in mkeys}, X, seed, nj)
     jobs = [(m, p, K) for m in METHODS for K in Km[m] for p in mkeys]
     rows = Parallel(n_jobs=nj, max_nbytes="1M", mmap_mode="r")(delayed(eval_job)(k, X[k[1]], A, L[k], n_perm_month, seed, variant) for k in jobs)
     df = pd.concat([df_all, pd.DataFrame(rows)], ignore_index=True)

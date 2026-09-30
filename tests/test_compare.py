@@ -76,3 +76,22 @@ def test_final_covers_all_mo_months():
     assert pd.api.types.is_integer_dtype(f.label) and f.label.min() == 0
     assert f.label.nunique() == f.label.max() + 1  # номера типов подряд с 0
     assert f.groupby("month").label.nunique().min() >= 2
+
+
+def test_new_baselines_k_labels_and_seed():
+    # три блоба по признакам и граф «клика внутри блоба»: Ward, GMM и спектральная дают ровно K
+    # меток, находят блобы и повторяются при том же seed
+    from scipy import sparse
+    from sklearn.metrics import adjusted_rand_score
+    from src.baseline import gmm_labels, spectral_labels, ward_labels
+    rng = np.random.default_rng(0)
+    truth = np.repeat(np.arange(3), 30)
+    X = rng.normal(0, 0.3, (90, 4)) + np.eye(3, 4)[truth] * 5
+    A = sparse.csr_matrix((truth[:, None] == truth[None, :]) & ~np.eye(90, dtype=bool), dtype=float)
+    A = A + sparse.csr_matrix(rng.random((90, 90)) < 0.01) * 0.1
+    A = A.maximum(A.T)
+    for f, inp in ((ward_labels, X), (gmm_labels, X), (spectral_labels, A)):
+        a, b = f(inp, 3, 7), f(inp, 3, 7)
+        assert len(np.unique(a)) == 3 and adjusted_rand_score(truth, a) == 1, f.__name__
+        assert (a == b).all(), f.__name__
+        assert len(np.unique(f(inp, 5, 7))) == 5, f.__name__

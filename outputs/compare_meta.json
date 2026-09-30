@@ -8,17 +8,23 @@
  },
  "best_k": {
   "canus": 9,
+  "gmm": 4,
   "kefrin": 10,
   "kmeans": 8,
   "leiden": 4,
-  "patterns": 4
+  "patterns": 4,
+  "spectral": 4,
+  "ward": 7
  },
  "best_k_without_AVU": {
   "canus": 9,
+  "gmm": 4,
   "kefrin": 10,
   "kmeans": 5,
   "leiden": 7,
-  "patterns": 4
+  "patterns": 4,
+  "spectral": 4,
+  "ward": 7
  },
  "k_common": [
   7,
@@ -57,5 +63,5 @@
   5878,
   4126
  ],
- "seconds": 111
+ "seconds": 208
 }

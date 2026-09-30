@@ -1,9 +1,11 @@
-"""Два базовых метода и выбор K по индексам ICVI.
+"""Базовые методы и выбор K по индексам ICVI.
 
   k-means   — sklearn KMeans на нормированных признаках (src/features.py), n_init из конфига.
   Leiden    — leidenalg, RBConfiguration (модулярность с разрешением γ) на kNN-графе.
               Нужное K получаем бисекцией по log γ (до 5 сидов); если ровно K не выходит — ближайшее.
               «Естественное» разбиение — γ = 1 (чистая модулярность).
+  Ward, GMM, спектральная — ещё три базовых метода для сборщика (scripts/run_compare.py):
+              Уорд и смесь гауссиан на тех же признаках, что k-means, спектральная — на общем графе.
 
 Периоды: 24 месяца (помесячные признаки и граф месяца) и 'all' (сквозные признаки, граф по
 долям всех 24 месяцев). Для каждого периода, метода и K считаются все индексы
@@ -17,7 +19,8 @@ import leidenalg as la
 import numpy as np
 import pandas as pd
 from scipy.optimize import linear_sum_assignment
-from sklearn.cluster import KMeans
+from sklearn.cluster import AgglomerativeClustering, KMeans, SpectralClustering
+from sklearn.mixture import GaussianMixture
 
 from src.icvi import DIRECTION, all_indices, pairwise_dist, perm_z
 from src.network import to_igraph
@@ -25,6 +28,25 @@ from src.network import to_igraph
 
 def kmeans_labels(X, K, seed=42, n_init=20):
     return KMeans(n_clusters=K, n_init=n_init, random_state=seed).fit_predict(np.asarray(X))
+
+
+def ward_labels(X, K, seed=None):
+    """Агломеративная кластеризация Уорда: детерминирована, seed не нужен (он для общего вызова)."""
+    return AgglomerativeClustering(n_clusters=K, linkage="ward").fit_predict(np.asarray(X))
+
+
+def gmm_labels(X, K, seed=42, n_init=5):
+    """Смесь гауссиан с диагональной ковариацией: доли шести категорий в сумме дают 1, поэтому полная
+    ковариация признаков вырождена (держится только на reg_covar); диагональ устойчива и даёт
+    12·30 = 360 параметров при K=12 на 15 признаках вместо 1 620 у полной."""
+    X = np.asarray(X)
+    return GaussianMixture(K, covariance_type="diag", n_init=n_init, random_state=seed).fit(X).predict(X)
+
+
+def spectral_labels(A, K, seed=42):
+    """Нормализованная спектральная кластеризация (Ши–Малик) на взвешенном графе A: K собственных
+    векторов лапласиана случайного блуждания I − D⁻¹A, затем k-means по строкам (10 стартов, seed)."""
+    return SpectralClustering(K, affinity="precomputed", random_state=seed).fit_predict(A)
 
 
 def _leiden(g, gamma, seed, n_iterations):
