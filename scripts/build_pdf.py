@@ -68,6 +68,7 @@ def md_to_html(text, title):
         return f"KTXNOTE{notes.index(m.group(1)) + 1}KTX"
 
     text = re.sub(r"\[\^([^\]]+)\]:?", note, text)
+    text = re.sub(r"(?<=\d) (?=\d{3}(?!\d))", " ", text)  # «2 016» не рвётся по строкам в узких столбцах
     body = MarkdownIt("commonmark", {"html": False}).enable("table").render(text)
     body = re.sub(r"<p>KTXNOTE(\d+)KTX", r'<p class="fn"><sup>\1</sup>', body)
     body = re.sub(r"KTXNOTE(\d+)KTX", r"<sup>\1</sup>", body)

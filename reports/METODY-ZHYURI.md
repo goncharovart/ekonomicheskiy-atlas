@@ -99,7 +99,7 @@ $$ANUI=\frac{1}{AVU+1/AVI}=\frac{AVI}{1+AVI\cdot AVU}\quad(\text{больше �
 
 **Нормировка AVU.** В коде Pattern сумма по парам делится на $K$, а не на $K(K-1)$. Первоисточник Biswas & Biswas закрыт (ResearchGate 403), поэтому нормировку автора я не проверил. Решение: берём нормировку лаборатории жюри (это их код) и оговариваем её в отчёте одной фразой.
 
-Проверенный код. Он совпадает с `AdjacencyClusteringMetrics.get_metric` из Pattern и с `networkx` до 1e-9; проверка лежит в scratchpad, `chk_icvi.py`:
+Проверенный код (в проекте — `graph_indices` в `src/icvi.py`). С `AdjacencyClusteringMetrics.get_metric` из Pattern он совпал до 1e-9 при разовой сверке на пяти случайных графах. В репозитории проверка закреплена тестами `tests/test_icvi.py`: Q совпадает с `networkx` до 1e-12, на изолированных кликах $AVI=1$, $AVU=0$, $Q=1-1/K$, при $K=2$ и $K=3$ AVU у любого разбиения равен 1 и 2/3, у правильного разбиения все шесть индексов лучше, чем у случайного:
 
 ```python
 def graph_icvi(A, labels):          # A: симметричная (N,N), без петель
