@@ -1,0 +1,46 @@
+{
+ "n_mo": 2016,
+ "n_months": 24,
+ "external_commits": {
+  "KEFRiN": "f9f96b1a778cb8d2e5ba85baae452dc813c4f110",
+  "CANUS": "754622af6eff9604a590e862a108c4c4212acf2d"
+ },
+ "seconds": {
+  "pattern": 0.7,
+  "pattern_adjacent": 0.5,
+  "kefrin": 369.0,
+  "canus": 496.2
+ },
+ "n_clusters": {
+  "pattern": {
+   "distinct_patterns": 127,
+   "per_month_median": 108.0,
+   "top8_coverage": 0.2310474537037037
+  },
+  "pattern_adjacent": {
+   "distinct_patterns": 17,
+   "per_month_median": 16.0,
+   "top8_coverage": 0.853525958994709
+  },
+  "kefrin": {
+   "k": 8,
+   "nonempty_per_month_min": 8,
+   "min_cluster_size": 115
+  },
+  "canus": {
+   "k": 8,
+   "nonempty_per_month_min": 8,
+   "min_cluster_size": 96
+  }
+ },
+ "pattern_stability": {
+  "never_changed": 3,
+  "median_changes": 15.0,
+  "median_modal_share": 0.25
+ },
+ "pattern_adjacent_stability": {
+  "never_changed": 136,
+  "median_changes": 6.0,
+  "median_modal_share": 0.5833333333333334
+ }
+}

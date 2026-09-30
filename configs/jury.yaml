@@ -1,0 +1,33 @@
+# Методы жюри: scripts/run_jury.py --config configs/jury.yaml
+seed: 42
+# признаки (доли категорий в тратах) и временный граф до унификации с src/network.py
+categories: [Здоровье, Маркетплейсы, Общественное питание, Продовольствие, Транспорт]
+knn_k: 10              # косинусный kNN по долям, симметризация max(W, W^T), вес = косинус
+months: all            # all или число первых месяцев (для быстрой проверки)
+
+kefrin:                # external/KEFRiN/kefrin.py, KEFRiNc (косинусное расстояние)
+  n_clusters: 8
+  distance: cosine
+  rho: 1.0             # вес признаков
+  xi: 1.0              # вес сети
+  n_init: 10
+  max_iter: 300
+  preprocessing_y: z_score
+  preprocessing_p: none
+
+canus:                 # external/CANUS/canus.py, CANUSInit; признаки z-score
+  n_clusters: 8
+  epochs: 300
+  learning_rate: 0.001
+  tau: 1.0
+  bootstrap_samples: 50
+  rho: 1.0
+  zeta: 1.0
+  init_mode: kmeans++
+  update_rule: vanilla_filtered
+  fast_grad_norms: true  # норма градиента формулой вместо цикла autograd; метки те же, в ~25 раз быстрее
+
+pattern:               # Алескеров–Мячин
+  normalize: percentile  # ранг-процентиль каждой категории по всей панели (все МО × месяцы)
+  eps: 0.0               # |x_j - x_k| <= eps -> «=»
+  modes: [pairs, adjacent]  # первый -> outputs/labels/pattern.parquet, остальные -> pattern_<mode>.parquet

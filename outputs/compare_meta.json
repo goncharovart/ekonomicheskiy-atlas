@@ -1,0 +1,61 @@
+{
+ "graph": "lagcorr_knn",
+ "graph_stats": {
+  "edges": 25496,
+  "mean_degree": 25.293650793650794,
+  "isolates": 0,
+  "components": 1
+ },
+ "best_k": {
+  "canus": 9,
+  "kefrin": 10,
+  "kmeans": 8,
+  "leiden": 4,
+  "patterns": 4
+ },
+ "best_k_without_AVU": {
+  "canus": 9,
+  "kefrin": 10,
+  "kmeans": 5,
+  "leiden": 7,
+  "patterns": 4
+ },
+ "k_common": [
+  7,
+  8
+ ],
+ "k_select": [
+  "SW",
+  "CH",
+  "S_Dbw",
+  "z_AVI",
+  "z_AVU",
+  "Q"
+ ],
+ "leiden_gamma": {
+  "4": 0.2626209527531349,
+  "5": 0.48768988404573677,
+  "6": 0.5693080712433037,
+  "7": 0.9056452674745888,
+  "8": 1.0572111034565372,
+  "9": 1.187310780093579,
+  "10": 1.2341425030448252,
+  "11": 1.4975102424202,
+  "12": 1.681792830507429
+ },
+ "n_patterns": 127,
+ "final": {
+  "method": "kefrin",
+  "K": 7
+ },
+ "final_sizes": [
+  8729,
+  8690,
+  8251,
+  6469,
+  6241,
+  5878,
+  4126
+ ],
+ "seconds": 111
+}

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Экономический атлас муниципалитетов</title>
+<meta name="description" content="Типы местных экономик 2 016 муниципалитетов России по безналичным тратам жителей (СберИндекс) и их изменение по месяцам 2023–2024 годов.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#top">Экономический атлас <span>муниципалитетов</span></a>
+    <nav>
+      <a href="#map">Карта</a><a href="#flows">Переходы</a><a href="#types">Типы</a><a href="#methods">Методы</a><a href="#method">Как считали</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero wrap">
+    <p class="kicker">Конкурс СберИндекса · трек «Кластеризация»</p>
+    <h1>Типы местных экономик России: <span class="nowrap" id="h-n">2 016</span> муниципалитетов, 24&nbsp;месяца</h1>
+    <p class="lede">Мы разложили муниципалитеты на типы по структуре безналичных трат жителей: продукты, маркетплейсы, кафе и рестораны, здоровье, транспорт. Затем проследили, как каждый муниципалитет переходит между типами месяц за месяцем с января 2023 по декабрь 2024 года.</p>
+    <p class="headline"><span class="hl-label">Главный вывод</span><span id="headline"></span></p>
+    <dl class="facts" id="facts"></dl>
+  </section>
+
+  <section class="block" id="map">
+    <div class="wrap">
+      <header class="sec-head"><span class="num">01</span><div><h2>Карта типов по месяцам</h2>
+        <p class="sub">Цвет — тип местной экономики муниципалитета в выбранном месяце. Слой «Устойчивость» показывает, какую долю из 24 месяцев МО провёл в своём основном типе.</p></div></header>
+      <div class="controls">
+        <button id="play" class="btn" type="button" aria-label="Проиграть по месяцам">▶</button>
+        <label class="slider"><span class="sr">Месяц</span><input id="month" type="range" min="0" max="23" value="0" step="1"></label>
+        <output id="month-label" class="month-label"></output>
+        <div class="seg" role="group" aria-label="Слой карты">
+          <button type="button" class="on" data-layer="type">Тип</button><button type="button" data-layer="stab">Устойчивость</button>
+        </div>
+        <label class="search"><span class="sr">Найти муниципалитет</span>
+          <input id="search" list="mo-list" placeholder="Найти муниципалитет…" autocomplete="off"><datalist id="mo-list"></datalist></label>
+      </div>
+      <div class="map-grid">
+        <div class="map-box">
+          <svg id="map-svg" role="img" aria-label="Карта муниципалитетов России, окрашенных по типу экономики"></svg>
+          <div class="zoom"><button type="button" data-z="in" aria-label="Приблизить">+</button><button type="button" data-z="out" aria-label="Отдалить">−</button><button type="button" data-z="reset" aria-label="Вся страна">⤢</button></div>
+          <p class="hint">Колесо с Ctrl или два пальца — масштаб. Нажмите на МО, чтобы закрепить карточку.</p>
+        </div>
+        <aside class="side">
+          <div id="legend" class="legend"></div>
+          <div id="card" class="card"><p class="muted">Наведите или нажмите на муниципалитет, или найдите его по названию: здесь появятся его тип, доли трат в выбранном месяце и траектория за два года.</p></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt" id="flows">
+    <div class="wrap">
+      <header class="sec-head"><span class="num">02</span><div><h2>Переходы между типами по кварталам</h2>
+        <p class="sub">Столбик — число МО каждого типа в квартале (тип квартала — самый частый из трёх месяцев). Лента — МО, которые перешли из типа в тип между соседними кварталами.</p></div></header>
+      <div class="controls">
+        <label class="check"><input type="checkbox" id="only-moves"> только смены типа</label>
+        <span class="muted" id="flow-stat"></span>
+      </div>
+      <p class="swipe muted">Диаграмма шире экрана — листайте вбок.</p>
+      <div class="scroll-x"><svg id="alluvial" role="img" aria-label="Аллювиальная диаграмма переходов МО между типами"></svg></div>
+    </div>
+  </section>
+
+  <section class="block" id="types">
+    <div class="wrap">
+      <header class="sec-head"><span class="num">03</span><div><h2>Профили типов</h2>
+        <p class="sub">Доля каждой категории в тратах типа и её отношение к среднему по всем МО (×1 — как в среднем). Темп — медиана роста трат 2024 к 2023. Показатели Росстата — медианы по МО типа.</p></div></header>
+      <div id="profiles" class="profiles"></div>
+    </div>
+  </section>
+
+  <section class="block alt" id="methods">
+    <div class="wrap">
+      <header class="sec-head"><span class="num">04</span><div><h2>Сравнение методов по шести индексам качества</h2>
+        <p class="sub">Пять методов при одном K&nbsp;=&nbsp;7 на общих признаках и общем графе. По каждому индексу метод получает оценку 1, 2 или 3 (треть мест); место — пороговое агрегирование Алескерова: выше тот, у кого меньше троек, затем меньше двоек. Место по Борда — в подсказке у места. Лучшее значение в столбце выделено.</p></div></header>
+      <div class="controls">
+        <label class="check"><input type="checkbox" id="m-month"> медиана по 24 месяцам</label>
+        <label class="check"><input type="checkbox" id="m-noavu"> без AVU</label>
+        <span class="muted" id="m-state"></span>
+      </div>
+      <p class="swipe muted">Таблица шире экрана — листайте вбок, место в последнем столбце.</p>
+      <div class="scroll-x"><table id="methods-table" class="mtable"></table></div>
+      <p class="note">SW, CH и S_Dbw считаются на признаках, AVI, AVU и модулярность Q — на графе сходства. AVI и AVU входят в рейтинг через z (отклонение от случайных разбиений): их сырые значения зависят от K. CH подыгрывает k-means, поэтому сравнивать стоит по всем шести индексам сразу.</p>
+      <p class="note">AVU видит только форму разреза, а не долю связей внутри типов, поэтому у хороших разбиений он на уровне случайного (z&nbsp;&gt;&nbsp;0); без AVU лидер не меняется — <span id="avu-link"></span>.</p>
+    </div>
+  </section>
+
+  <section class="block" id="method">
+    <div class="wrap">
+      <header class="sec-head"><span class="num">05</span><div><h2>Как считали</h2>
+        <p class="sub">Пять шагов. Каждый воспроизводится одной командой из репозитория.</p></div></header>
+      <ol class="pipeline">
+        <li><b>Данные</b><span>Траты по картам СберИндекса: 5 категорий, 2 016 МО с полными 24 месяцами. Признаки — доли трат, уровень трат на жителя, доступность рынков. Росстат в признаки не входит: он для внешней проверки типов.</span></li>
+        <li><b>Сеть</b><span>Узлы — МО. Основной граф — k ближайших соседей (k&nbsp;=&nbsp;15) по корреляции помесячных рядов трат на жителя с лагом до 2 месяцев: чьи траты движутся вместе. Один на весь период, без изолятов.</span></li>
+        <li><b>Кластеры</b><span>Пять методов при K&nbsp;=&nbsp;7: k-means, Leiden, KEFRiN, CANUS, паттерн-кластеризация. Шесть индексов, свод — пороговое агрегирование Алескерова. Итог — KEFRiN (сеть + атрибуты).</span></li>
+        <li><b>Динамика</b><span>Каждый месяц KEFRiN на помесячных признаках и общем графе; номера типов сведены со сквозным разбиением венгерским алгоритмом, затем подогнаны под основной тип МО за 24 месяца, чтобы близкие сельские типы не менялись номерами по кругу. Получаются траектории МО и переходы.</span></li>
+        <li><b>Типы</b><span>Профиль, темп роста, показатели Росстата и примеры каждого типа.</span></li>
+      </ol>
+      <p class="links" id="links"></p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot wrap">
+  <p>Данные: СберИндекс (данные конкурса, лицензия организатора), Росстат, справочник границ МО СберИндекса. Собрано: <span id="built"></span>.</p>
+</footer>
+
+<div id="tip" class="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="data/atlas.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

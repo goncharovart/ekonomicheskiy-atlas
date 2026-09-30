@@ -1,0 +1,23 @@
+{
+ "best_k": {
+  "kmeans": {
+   "all": 7,
+   "month": 10
+  },
+  "leiden": {
+   "all": 10,
+   "month": 12
+  }
+ },
+ "proximity_sigma_km": 145.64999999999998,
+ "k_select": [
+  "SW",
+  "CH",
+  "S_Dbw",
+  "z_AVI",
+  "z_AVU",
+  "Q"
+ ],
+ "network_main": "cosine",
+ "seconds": 151
+}

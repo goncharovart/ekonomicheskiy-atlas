@@ -1,0 +1,41 @@
+# Базовые методы: k-means по признакам и Leiden по kNN-графу. Запуск: scripts/run_baseline.py
+seed: 42
+# воркеров joblib (baseline, compare, бутстрэп динамики): каждый ~0,5 ГБ памяти, больше 3 — риск её нехватки
+n_jobs: 3
+
+features:
+  clip_z: 4.0
+  # growth (Δln трат к прошлому месяцу) — шум: ранговая корреляция соседних месяцев ≈ −0,25.
+  # В помесячную кластеризацию не берём; темп входит через trend_* в сквозных признаках.
+  monthly_cols: [sh_health, sh_market, sh_food_out, sh_grocery, sh_transport, sh_other, log_level, market_access]
+
+network:
+  main: cosine            # граф для Leiden и графовых индексов: cosine | combo
+  knn_k: 15               # соседей в kNN-графе (симметризация max)
+  threshold_top: 0.011    # пороговый граф: доля самых сильных пар (средняя степень ≈ 22, как у kNN при k=15)
+  corr_max_lag: 2         # сдвиг рядов в корреляции, месяцев
+  detour: 1.3             # где нет ни дороги, ни ж/д: прямая × detour
+  proximity_sigma: null   # null → медиана расстояния до knn_k-го соседа
+  dtw: {n_sub: 500, window: 3}   # DTW на подвыборке МО (полоса Сако–Чибы, месяцев)
+
+clustering:
+  k_range: [4, 12]
+  kmeans: {n_init: 20}
+  leiden:
+    n_iterations: -1      # до сходимости
+    gamma_range: [0.001, 20.0]   # поиск разрешения под заданное K (бисекция по log γ)
+    bisect_steps: 30
+
+icvi:
+  s_dbw_variant: paper    # paper | package (см. src/icvi.py)
+  n_perm_all: 200         # перестановок меток для z на сквозных признаках
+  n_perm_month: 20        # и помесячно (дешевле; z по 24 месяцам потом усредняется)
+  # выбор K: сумма рангов Борда по шести индексам; AVI и AVU берём как z против перестановок
+  # (сырые AVI ~ 1/K и AVU ~ (K−1)/(2K−3) несравнимы при разных K)
+  k_select: [SW, CH, S_Dbw, z_AVI, z_AVU, Q]
+
+outputs:
+  labels_dir: outputs/labels
+  icvi_csv: outputs/baseline_icvi.csv
+  network_csv: outputs/network_ablation.csv
+  best_k_json: outputs/baseline_best_k.json

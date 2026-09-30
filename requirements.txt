@@ -1,0 +1,29 @@
+# Python 3.12. Установка: python -m pip install -r requirements.txt
+# torch — сборка только для CPU с индекса PyTorch (нужен CANUS, GPU не требуется)
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# данные: скачивание, панель, геометрия
+requests==2.34.2
+certifi==2026.7.22
+pandas==3.0.6
+numpy==2.5.3
+pyarrow==25.0.1
+openpyxl==3.1.5
+geopandas==1.2.0
+pyogrio==0.13.0
+shapely==2.1.2
+pyproj==3.8.0
+PyYAML==6.0.3
+
+# методы и индексы
+scikit-learn==1.9.1
+scipy==1.18.1
+joblib==1.6.0
+igraph==1.0.0
+leidenalg==0.12.0
+torch==2.14.0+cpu
+
+# тесты; s-dbw и networkx — сверка S_Dbw и графовых индексов с чужими реализациями
+pytest==9.1.1
+s-dbw==0.4.0
+networkx==3.6.1

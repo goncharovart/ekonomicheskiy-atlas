@@ -1,0 +1,27 @@
+# Сборщик: пять методов на общих признаках и общем графе. Запуск: scripts/run_compare.py
+seed: 42
+baseline_config: configs/baseline.yaml  # признаки (clip_z, monthly_cols), knn_k, corr_max_lag, k_range, leiden, icvi
+jury_config: configs/jury.yaml          # гиперпараметры KEFRiN, CANUS и паттернов (n_clusters оттуда не берём)
+
+# Общий граф для Leiden, KEFRiN, CANUS и графовых индексов всех методов: kNN (k = knn_k) по корреляции
+# рядов ln трат с лагом. Почему он, а не косинус долей или «траты × близость» — outputs/final_choice.md.
+graph: lagcorr_knn
+
+k_common: [7, 8]        # одинаковое K для всех методов; первое — основной вариант таблицы и рейтинга
+k_select: [SW, CH, S_Dbw, z_AVI, z_AVU, Q]  # как в baseline.yaml: лучшее K метода (Борда на сквозных) и рейтинг
+n_grades: 3             # пороговое агрегирование: оценки 1/2/3 (трети мест)
+# воркеров joblib (baseline, compare, бутстрэп динамики): каждый ~0,5 ГБ памяти, больше 3 — риск её нехватки
+n_jobs: 3
+
+# Итоговая типология (обоснование — outputs/final_choice.md)
+final: {method: kefrin, K: 7}
+
+outputs:
+  labels_cache: outputs/labels/jury_common_byK.parquet  # KEFRiN и CANUS на общих входах (дорого, кэш)
+  labels_all: outputs/labels/compare_byK.parquet        # метки всех пяти методов: method, period, K, mo_id, cluster
+  indices_full: outputs/compare_indices_full.csv        # все методы × K × периоды
+  indices: outputs/indices.csv                          # 5 методов × (общее K, своё лучшее K) × (сквозные, медиана месяцев)
+  ranking: outputs/method_ranking.csv
+  stability: outputs/compare_stability.csv
+  final_labels: outputs/labels/final.parquet
+  diagnostics: outputs/diagnostics.json                 # воспроизводимые числа для отчёта (темп соседних месяцев и др.)

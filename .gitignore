@@ -1,0 +1,10 @@
+.venv/
+data/raw/*
+!data/raw/SHA256SUMS
+certs/ca_bundle.pem
+__pycache__/
+.pytest_cache/
+external/
+outputs/quick/
+reports/*.html
+PLAN.md

@@ -1,0 +1,447 @@
+{
+ "n_mo": 2016,
+ "n_months": 24,
+ "K": 7,
+ "quarters": [
+  "2023-Q1",
+  "2023-Q2",
+  "2023-Q3",
+  "2023-Q4",
+  "2024-Q1",
+  "2024-Q2",
+  "2024-Q3",
+  "2024-Q4"
+ ],
+ "quarter_ties_1_1_1": 271,
+ "labels": "номера согласованы под модальный тип МО (consensus_align); final.parquet как есть — as_given",
+ "as_given": {
+  "share_zero_raw": 0.251,
+  "raw_median": 4.0,
+  "raw_total": 10039,
+  "h2_median": 0.0,
+  "h3_median": 0.0,
+  "modal_share_mean": 0.824,
+  "quarters_traj": {
+   "stable": 1035,
+   "other": 905,
+   "moved": 76
+  },
+  "year_changed": 268,
+  "monthly_survive_same_number_share": 0.993,
+  "months_relabeled_by_consensus": {}
+ },
+ "type_profile": {
+  "0": {
+   "sh_health": 4.9,
+   "sh_market": 12.4,
+   "sh_food_out": 1.8,
+   "sh_grocery": 50.0,
+   "sh_transport": 5.4,
+   "sh_other": 25.5,
+   "spend_geo_mean": 20200.0,
+   "market_access": 285.0,
+   "n_mo_months": 8729,
+   "n_mo_modal": 377
+  },
+  "1": {
+   "sh_health": 4.2,
+   "sh_market": 16.4,
+   "sh_food_out": 1.9,
+   "sh_grocery": 47.9,
+   "sh_transport": 4.6,
+   "sh_other": 25.0,
+   "spend_geo_mean": 23600.0,
+   "market_access": 320.0,
+   "n_mo_months": 8690,
+   "n_mo_modal": 342
+  },
+  "2": {
+   "sh_health": 5.4,
+   "sh_market": 17.6,
+   "sh_food_out": 1.8,
+   "sh_grocery": 46.2,
+   "sh_transport": 5.5,
+   "sh_other": 23.5,
+   "spend_geo_mean": 21600.0,
+   "market_access": 343.0,
+   "n_mo_months": 8251,
+   "n_mo_modal": 357
+  },
+  "3": {
+   "sh_health": 5.5,
+   "sh_market": 13.1,
+   "sh_food_out": 6.7,
+   "sh_grocery": 34.3,
+   "sh_transport": 7.1,
+   "sh_other": 33.3,
+   "spend_geo_mean": 43300.0,
+   "market_access": 534.0,
+   "n_mo_months": 6469,
+   "n_mo_modal": 251
+  },
+  "4": {
+   "sh_health": 4.1,
+   "sh_market": 10.5,
+   "sh_food_out": 3.7,
+   "sh_grocery": 43.4,
+   "sh_transport": 5.1,
+   "sh_other": 33.2,
+   "spend_geo_mean": 33900.0,
+   "market_access": 196.0,
+   "n_mo_months": 6241,
+   "n_mo_modal": 269
+  },
+  "5": {
+   "sh_health": 5.5,
+   "sh_market": 12.2,
+   "sh_food_out": 6.1,
+   "sh_grocery": 36.6,
+   "sh_transport": 7.1,
+   "sh_other": 32.6,
+   "spend_geo_mean": 33900.0,
+   "market_access": 339.0,
+   "n_mo_months": 5878,
+   "n_mo_modal": 277
+  },
+  "6": {
+   "sh_health": 4.5,
+   "sh_market": 12.3,
+   "sh_food_out": 3.1,
+   "sh_grocery": 43.8,
+   "sh_transport": 7.3,
+   "sh_other": 29.0,
+   "spend_geo_mean": 24900.0,
+   "market_access": 245.0,
+   "n_mo_months": 4126,
+   "n_mo_modal": 143
+  }
+ },
+ "switches": {
+  "raw_median": 4.0,
+  "h2_median": 0.0,
+  "h3_median": 0.0,
+  "raw_total": 10039,
+  "h2_total": 2422,
+  "h3_total": 725,
+  "share_zero_raw": 0.251,
+  "share_zero_h2": 0.538,
+  "share_zero_h3": 0.76,
+  "dist_h3": {
+   "0": 1533,
+   "1": 308,
+   "2": 119,
+   "3": 47,
+   "4": 7,
+   "5": 2
+  }
+ },
+ "modal_share_mean": 0.824,
+ "quarters_traj": {
+  "stable": 1035,
+  "other": 905,
+  "moved": 76
+ },
+ "quarter_same_type_share": [
+  0.776,
+  0.79,
+  0.839,
+  0.817,
+  0.837,
+  0.839,
+  0.798
+ ],
+ "year_same_type": 1748,
+ "year_changed": 268,
+ "year_changed_and_moved_for_good": 35,
+ "top_year_flows": [
+  {
+   "from_type": 1,
+   "to_type": 2,
+   "n_mo": 45,
+   "share_of_from": 0.127,
+   "n_moved_for_good": 13,
+   "top_regions": "Тверская область (8); Калужская область (6); Рязанская область (4)",
+   "examples": "Козельский (Калужская область); Бежецкий (Тверская область); Ясногорский (Тульская область)"
+  },
+  {
+   "from_type": 0,
+   "to_type": 1,
+   "n_mo": 26,
+   "share_of_from": 0.069,
+   "n_moved_for_good": 3,
+   "top_regions": "Республика Коми (3); Алтайский край (3); Кировская область (3)",
+   "examples": "Старомайнский (Ульяновская область); Бирилюсский (Красноярский край); Пестяковский (Ивановская область)"
+  },
+  {
+   "from_type": 2,
+   "to_type": 1,
+   "n_mo": 22,
+   "share_of_from": 0.064,
+   "n_moved_for_good": 3,
+   "top_regions": "Самарская область (6); Орловская область (3); Волгоградская область (2)",
+   "examples": "Сенгилеевский (Ульяновская область); Большечерниговский (Самарская область); Касимовский (Рязанская область)"
+  },
+  {
+   "from_type": 6,
+   "to_type": 5,
+   "n_mo": 18,
+   "share_of_from": 0.107,
+   "n_moved_for_good": 2,
+   "top_regions": "Республика Башкортостан (4); Республика Татарстан (2); Красноярский край (2)",
+   "examples": "Чишминский (Республика Башкортостан); Череповецкий (Вологодская область)"
+  },
+  {
+   "from_type": 6,
+   "to_type": 4,
+   "n_mo": 17,
+   "share_of_from": 0.101,
+   "n_moved_for_good": 0,
+   "top_regions": "Приморский край (5); Республика Саха (Якутия) (3); Забайкальский край (3)",
+   "examples": "Черногорск (Республика Хакасия); Назарово (Красноярский край); Надеждинский (Приморский край)"
+  }
+ ],
+ "monic": {
+  "tau": 0.5,
+  "tau_split": 0.25,
+  "quarter_counts": {
+   "survive": 48,
+   "split": 1
+  },
+  "month_counts": {
+   "survive": 149,
+   "split": 6,
+   "absorb": 6,
+   "emerge": 4
+  },
+  "survive_same_number_share": 0.995,
+  "quarter_overlap_min": 0.491,
+  "quarter_overlap_median": 0.816,
+  "month_overlap_min": 0.0,
+  "month_overlap_median": 0.82,
+  "tau_sensitivity_quarters": {
+   "0.4": {
+    "survive": 49
+   },
+   "0.5": {
+    "survive": 48,
+    "split": 1
+   },
+   "0.6": {
+    "survive": 44,
+    "split": 3,
+    "disappear": 2,
+    "emerge": 2
+   },
+   "0.7": {
+    "survive": 41,
+    "split": 5,
+    "disappear": 3,
+    "emerge": 3
+   },
+   "0.8": {
+    "survive": 32,
+    "disappear": 12,
+    "emerge": 11,
+    "split": 5
+   }
+  }
+ },
+ "stability": {
+  "ari_adjacent_months_mean": 0.614,
+  "ari_adjacent_months_min": 0.477,
+  "ari_adjacent_quarters_mean": 0.642,
+  "ari_kefrin_vs_method_same_month": {
+   "canus": 0.534,
+   "kmeans": 0.415,
+   "leiden": 0.279,
+   "patterns": 0.251
+  },
+  "bootstrap_kefrin_80pct": {
+   "2023-01": {
+    "runs": 10,
+    "ari_mean": 0.771,
+    "ari_q05": 0.622,
+    "ari_q95": 0.924,
+    "jaccard_by_type": {
+     "0": 0.775,
+     "1": 0.737,
+     "2": 0.737,
+     "3": 0.932,
+     "4": 0.899,
+     "5": 0.889,
+     "6": 0.769
+    }
+   },
+   "2023-07": {
+    "runs": 10,
+    "ari_mean": 0.8,
+    "ari_q05": 0.695,
+    "ari_q95": 0.895,
+    "jaccard_by_type": {
+     "0": 0.84,
+     "1": 0.851,
+     "2": 0.879,
+     "3": 0.811,
+     "4": 0.824,
+     "5": 0.727,
+     "6": 0.651
+    }
+   },
+   "2024-01": {
+    "runs": 10,
+    "ari_mean": 0.809,
+    "ari_q05": 0.735,
+    "ari_q95": 0.926,
+    "jaccard_by_type": {
+     "0": 0.863,
+     "1": 0.782,
+     "2": 0.826,
+     "3": 0.931,
+     "4": 0.844,
+     "5": 0.862,
+     "6": 0.705
+    }
+   },
+   "2024-07": {
+    "runs": 10,
+    "ari_mean": 0.667,
+    "ari_q05": 0.491,
+    "ari_q95": 0.834,
+    "jaccard_by_type": {
+     "0": 0.708,
+     "1": 0.63,
+     "2": 0.663,
+     "3": 0.809,
+     "4": 0.777,
+     "5": 0.768,
+     "6": 0.649
+    }
+   },
+   "all": {
+    "runs": 100,
+    "ari_mean": 0.689,
+    "ari_q05": 0.507,
+    "ari_q95": 0.815,
+    "jaccard_by_type": {
+     "0": 0.767,
+     "1": 0.796,
+     "2": 0.728,
+     "3": 0.709,
+     "4": 0.863,
+     "5": 0.563,
+     "6": 0.588
+    }
+   }
+  }
+ },
+ "seasonal": {
+  "by_type": {
+   "0": {
+    "mean_n_mo": 363.7,
+    "summer_minus_rest_pp": 0.36,
+    "dec_minus_rest_pp": 1.64,
+    "yoy_corr_of_monthly_profile": -0.229,
+    "min_month": "2024-11",
+    "max_month": "2023-11",
+    "range_n_mo": 171
+   },
+   "1": {
+    "mean_n_mo": 362.1,
+    "summer_minus_rest_pp": 1.35,
+    "dec_minus_rest_pp": -0.57,
+    "yoy_corr_of_monthly_profile": 0.051,
+    "min_month": "2023-05",
+    "max_month": "2023-11",
+    "range_n_mo": 128
+   },
+   "2": {
+    "mean_n_mo": 343.8,
+    "summer_minus_rest_pp": -0.55,
+    "dec_minus_rest_pp": -0.29,
+    "yoy_corr_of_monthly_profile": -0.53,
+    "min_month": "2023-11",
+    "max_month": "2024-04",
+    "range_n_mo": 203
+   },
+   "3": {
+    "mean_n_mo": 269.5,
+    "summer_minus_rest_pp": -1.52,
+    "dec_minus_rest_pp": -0.92,
+    "yoy_corr_of_monthly_profile": -0.223,
+    "min_month": "2023-01",
+    "max_month": "2024-11",
+    "range_n_mo": 131
+   },
+   "4": {
+    "mean_n_mo": 260.0,
+    "summer_minus_rest_pp": -0.11,
+    "dec_minus_rest_pp": 0.62,
+    "yoy_corr_of_monthly_profile": 0.298,
+    "min_month": "2023-10",
+    "max_month": "2023-03",
+    "range_n_mo": 124
+   },
+   "5": {
+    "mean_n_mo": 244.9,
+    "summer_minus_rest_pp": 0.58,
+    "dec_minus_rest_pp": -0.75,
+    "yoy_corr_of_monthly_profile": -0.624,
+    "min_month": "2023-05",
+    "max_month": "2024-09",
+    "range_n_mo": 132
+   },
+   "6": {
+    "mean_n_mo": 171.9,
+    "summer_minus_rest_pp": -0.1,
+    "dec_minus_rest_pp": 0.28,
+    "yoy_corr_of_monthly_profile": 0.098,
+    "min_month": "2024-06",
+    "max_month": "2023-10",
+    "range_n_mo": 115
+   }
+  },
+  "recurrent_switchers": {
+   "summer": {
+    "n_mo": 26,
+    "flows": {
+     "4->6": 6,
+     "5->4": 4,
+     "0->1": 3,
+     "2->1": 3,
+     "1->2": 2
+    },
+    "top_flow_regions": {
+     "4->6": "Алтайский край (1); Пермский край (1); Вологодская область (1)",
+     "5->4": "Приморский край (1); Иркутская область (1); Кемеровская область (1)",
+     "0->1": "Красноярский край (1); Курганская область (1); Томская область (1)"
+    },
+    "top_flow_examples": {
+     "4->6": "Чусовской (Пермский край); Великоустюгский (Вологодская область); Заринск (Алтайский край)",
+     "5->4": "Прокопьевский (Кемеровская область); Находкинский (Приморский край); Ханты-Мансийск (Ханты-Мансийский автономный округ — Югра)",
+     "0->1": "Каргапольский (Курганская область); Кривошеинский (Томская область); Казачинский (Красноярский край)"
+    }
+   },
+   "december": {
+    "n_mo": 37,
+    "flows": {
+     "1->0": 11,
+     "2->1": 5,
+     "1->2": 4,
+     "6->0": 3,
+     "0->2": 2
+    },
+    "top_flow_regions": {
+     "1->0": "Республика Марий Эл (2); Вологодская область (2); Кировская область (2)",
+     "2->1": "Рязанская область (2); Нижегородская область (1); Саратовская область (1)",
+     "1->2": "Калужская область (1); Костромская область (1); Нижегородская область (1)"
+    },
+    "top_flow_examples": {
+     "1->0": "Советский (Республика Марий Эл); Ирбитское (Свердловская область); Зуевский (Кировская область)",
+     "2->1": "Вольский (Саратовская область); Дальнеконстантиновский (Нижегородская область); Максатихинский (Тверская область)",
+     "1->2": "Пестравский (Самарская область); Большемурашкинский (Нижегородская область); Барятинский (Калужская область)"
+    }
+   }
+  }
+ },
+ "seconds": 2
+}

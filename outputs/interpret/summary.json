@@ -1,0 +1,19 @@
+{
+ "n_mo": 2016,
+ "type_sizes": [
+  377,
+  342,
+  357,
+  251,
+  269,
+  277,
+  143
+ ],
+ "T_mirkin": 29462.604312128602,
+ "explained_share_mirkin": 0.43063589362179167,
+ "fca_attributes": 40,
+ "fca_concepts": 7894,
+ "spearman_spend_wage2023_mo": 0.8616502712250474,
+ "spearman_spend_wage2023_types": 0.9285714285714288,
+ "seconds": 0.9
+}
