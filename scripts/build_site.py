@@ -32,6 +32,7 @@ PROFILES = ROOT / "outputs/interpret/profiles.csv"  # траты на жител
 INDICES = ROOT / "outputs/indices.csv"
 RANKING = ROOT / "outputs/method_ranking.csv"
 FINAL_METHOD = "kefrin"  # outputs/final_choice.md: итоговая типология — KEFRiN, K = 7
+REPO = "https://github.com/goncharovart/ekonomicheskiy-atlas"
 CATS = ["Продовольствие", "Маркетплейсы", "Общественное питание", "Здоровье", "Транспорт"]
 CAT_SHORT = {"Продовольствие": "продукты", "Маркетплейсы": "маркетплейсы",
              "Общественное питание": "кафе и рестораны", "Здоровье": "здоровье", "Транспорт": "транспорт"}
@@ -234,7 +235,7 @@ def main():
         "months": mkeys, "categories": CATS, "n_mo": len(ids), "n_regions": int(mo["region_name"].nunique()),
         "types": types, "headline": headline,
         "ru_shares": [round(float(x), 4) for x in ru], "ru_growth_total": _r(growth["Все категории"].median()),
-        "links": {"repo": "#", "report": "#", "pdf": "#"},
+        "links": {"repo": REPO, "report": REPO + "/blob/main/reports/ОТЧЁТ.md", "pdf": "landing.pdf"},
     }
     data = {
         "meta": meta,
